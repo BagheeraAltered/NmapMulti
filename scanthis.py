@@ -10,7 +10,7 @@ def worker(q):
 
         print(f'Scanning {subdomain} on port {port}...')
         with open(f'{subdomain}_output.txt', 'w') as outfile:
-            subprocess.run(['nmap', '-p', str(port), '--script', 'vulners', subdomain], stdout=outfile)
+            subprocess.run(['nmap', '-sV', '-p', str(port), '--script', 'vulners', subdomain], stdout=outfile)
         q.task_done()
 
 def main():
