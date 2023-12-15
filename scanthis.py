@@ -1,16 +1,21 @@
-import subprocess
 import threading
 from queue import Queue
+import nmap
 
 def worker(q):
+    nm = nmap.PortScanner()  # Initialize Nmap Scanner
     while True:
         subdomain, port = q.get()
         if subdomain is None:
             break
 
         print(f'Scanning {subdomain} on port {port}...')
-        with open(f'{subdomain}_output.txt', 'w') as outfile:
-            subprocess.run(['nmap', '-sV', '-p', str(port), '--script', 'vulners', subdomain], stdout=outfile)
+        nm.scan(subdomain, port, arguments='-sV --script vulners')
+
+        with open(f'{subdomain}_port{port}_output.txt', 'w') as outfile:
+            # Write scan results to file
+            outfile.write(nm.csv())
+
         q.task_done()
 
 def main():
